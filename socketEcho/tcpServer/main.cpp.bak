@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+
+#define TCP_PORT 5100       /* 서버의 포트 번호 */
+
+int main(int argc, char **argv)
+{   // 서버 소켓에 대한 정보값을 intiger로 return 
+    // 관리 번호가 생성되는데 이 값을 정수로 반환 한다. 
+    int serverSock_fd, clientSock_fd;              /* 소켓의 디스크립트 정의 */
+    socklen_t clen;
+    int n;
+    struct sockaddr_in servaddr, cliaddr;          /* 주소의 구조체 정의 */
+    char mesg[BUFSIZ];
+    
+    /* 서버 소켓 생성 */ 
+    if((serverSock_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    {
+        perror("socket()\n"); /* 버퍼를 안거치고 바로 화면에 error를 띄움 */
+        return -1;
+    }
+    /* 바로 재사용 하기 위해 추가 함 */ 
+    int option = 1; 
+    setsockopt(serverSock_fd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));   /* 해당 discrept를 재사용하겠다. */
+
+    // 주소 구조체에 주소 지정 
+    memset(&servaddr, 0, sizeof(servaddr)); 
+    servaddr.sin_family = AF_INET;                      // AF_INET >> 인터넷을 사용한다. 
+    servaddr.sin_addr.s_addr = htonl(INADDR_ANY);       // all Local IP를 할당한다. 
+    servaddr.sin_port = htons(TCP_PORT);                // 사용할 포트 지정 5100번 
+
+    /* bind 함수를 사용하여 서버 소켓의 주소 설정 */
+    // 내가 설정한 IP와 POrt num.을 os에 알려준다. (Memory를 점유 함)
+    if(bind(serverSock_fd, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0)
+    {
+        perror("bind()");
+        return -1; 
+    }
+    
+
+    // 해당 IP와 Port번호에 들어오는  IP를 8개 까지 수용한다. >> Buffering 하겠다. 
+    /* 동시에 접속하는 클라이언트의 처리를 위한 대기 큐를 설정 (8개 까지 Buffer를 만든다.)*/  
+    if(listen(serverSock_fd, 8) < 0){
+        perror("listen()");
+        return -1; 
+    }
+
+    clen = sizeof(cliaddr);
+    
+    while( clientSock_fd = accept(serverSock_fd, (struct sockaddr *) &cliaddr, &clen) > 0) // client에 대한 IP와 Port 번호까지 들어옴 
+    {
+        /* 클라이언트가 접속하면 접속을 허용하고 클라이언트 소켓 생성 */
+        /* 클라이언트가 허용할 때까지 대기중 */
+       
+        // 해당 정보를 accept() 하면서 연결이 시작 된다. 
+        if(clientSock_fd < 0)
+        {
+            perror("accept() error\n");
+            return -1; 
+        }
+
+        /*네트워크 주소를 문자열로 변경 */
+        inet_ntop(AF_INET, &cliaddr.sin_addr, mesg, BUFSIZ);    // 클라이언트에 대한 정보를 문자열로 변경함 (inet_ntop)
+        printf("Client is connented : %s\n", mesg); 
+
+        if((n = read(clientSock_fd, mesg, BUFSIZ)) <= 0)
+            perror("read()");
+
+        printf("Received data : %s", mesg);
+
+        /* 클라이언트로 buf에 있는 문자열 전송 */
+        if(write(clientSock_fd, mesg, n) <= 0)      // 클라이언트에서 받는 mesg를 읽음 
+            perror("write()");
+        
+        close(clientSock_fd);               /* 클라이언트 소켓을 닫음 */
+    } //while(strncmp(mesg, "q", 1));
+
+    close(serverSock_fd);                   /* 서버 소켓을 닫음 */ 
+    printf("close(ssock)\n");
+    return 0; 
+    
+}

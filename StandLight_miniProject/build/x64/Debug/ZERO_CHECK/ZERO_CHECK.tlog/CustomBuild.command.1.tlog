@@ -1,0 +1,10 @@
+^C:\AVR_ARM_PROJECT\C++RASPBERRYPI\STANDLIGHT_MINIPROJECT\BUILD\CMAKEFILES\E88C8A3C507A79FA17893877F400F877\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/AVR_ARM_PROJECT/C++RaspberryPi/StandLight_miniProject -BC:/AVR_ARM_PROJECT/C++RaspberryPi/StandLight_miniProject/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/AVR_ARM_PROJECT/C++RaspberryPi/StandLight_miniProject/build/StandLight.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

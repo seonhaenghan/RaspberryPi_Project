@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\AVR_ARM_PROJECT\C++RaspberryPi\StandLight_miniProject\build\CMakeFiles\e88c8a3c507a79fa17893877f400f877\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{C418880A-6C00-39DE-9BA7-14826634B0E4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
